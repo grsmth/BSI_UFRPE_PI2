@@ -1,0 +1,69 @@
+class CoordenadaLocal():
+    def __init__(self,nome,x,y):
+        self.nome = nome
+        self.x = x
+        self.y = y
+        
+    def __repr__(self):
+        return '{}'.format(self.nome)
+
+    def CalculaDistancia(self, outra):
+        distancia = abs(self.x - outra.x) + abs (self.y - outra.y) 
+        return distancia
+      
+def Permuta(lista):
+    if len(lista) == 1:
+        yield lista
+    else:
+        for i in range(len(lista)):
+            for j in Permuta(lista[:i]+lista[i+1:]):
+                yield [lista[i]]+j
+
+def EscolherCaminho(c,pde,d):
+    compC = len(c)
+    compD = len(pde)+2
+    soma = 0
+    for i in range(compC):
+        for j in range(compD-1):
+            temp = c[i][j].CalculaDistancia(c[i][j+1])
+            soma+=temp
+        d.append(soma)
+        soma = 0
+        
+def Lst_Str(lista):
+    string = ''.join([str(elem)for elem in lista])
+    return string
+    
+#inputs e armazenamento
+lin , col = list(map(int,input().split()))
+Mapa = []
+PontoDeEntrega = []
+Caminhos = []
+Distancia = []
+
+for num in range(lin):
+    n = list(input())
+    Mapa.append(n)
+
+#identificar pontos de entrega e suas coordenadas
+for x in range(lin):
+        for y in range(col):
+            if Mapa[x][y]!='0':
+                if Mapa[x][y]=='R':
+                    Mapa[x][y] = CoordenadaLocal(Mapa[x][y],x,y)
+                    R = Mapa[x][y]
+                else:
+                    Mapa[x][y] = CoordenadaLocal(Mapa[x][y],x,y)
+                    PontoDeEntrega.append(Mapa[x][y])
+
+for l in Permuta(PontoDeEntrega):
+    l.append(R)
+    l.insert(0,R)
+    Caminhos.append(l)
+    
+
+EscolherCaminho(Caminhos,PontoDeEntrega,Distancia)
+
+MenorDist = min(Distancia)
+IndexMenorDist = Distancia.index(MenorDist)
+print(Lst_Str(Caminhos[IndexMenorDist][1:-1]))
